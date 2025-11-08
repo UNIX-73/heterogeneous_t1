@@ -1,5 +1,5 @@
 NVCC       := nvcc
-NVCCFLAGS  := -O2 -Iinclude -Xcompiler "-Wall -Werror"
+NVCCFLAGS  := -O3 -Iinclude --fmad=false -DMEASURE_TIME -std=c++17
 
 SRC_DIR    := src
 BUILD_DIR  := build

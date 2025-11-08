@@ -1,5 +1,6 @@
 #include <init.h>
 #include <stddef.h>
+#include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -15,10 +16,16 @@ MatrixAndVec *matrices[MATRICES_N] = {
 	&m_40000_10000,
 };
 
+float random_n(float min, float max)
+{
+	double scale = rand() / (double)RAND_MAX;
+	return (float)(min + scale * (max - min));
+}
+
 void alloc_matrices()
 {
-
 	srand(123812930);
+
 	for (size_t i = 0; i < MATRICES_N; i++)
 	{
 		size_t matrix_size = matrices[i]->m * matrices[i]->n;
@@ -28,10 +35,10 @@ void alloc_matrices()
 		matrices[i]->vec = (float *)malloc(sizeof(float) * vec_size);
 
 		for (size_t j = 0; j < matrix_size; j++)
-			matrices[i]->matrix[j] = (float)rand();
+			matrices[i]->matrix[j] = random_n(-10000.0, 10000.0);
 
 		for (size_t k = 0; k < vec_size; k++)
-			matrices[i]->vec[k] = (float)rand();
+			matrices[i]->vec[k] = random_n(-10000.0, 10000.0);
 	}
 
 	printf("Matrices allocated\n");
