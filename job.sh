@@ -5,6 +5,6 @@
 #SBATCH --time=00:02:00
 #SBATCH --cpus-per-task=32
 #SBATCH --gres=gpu:1
-#SBATCH --mem=1G
+#SBATCH --mem=12G
 
 ./t1

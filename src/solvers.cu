@@ -70,7 +70,14 @@ __global__ void gpu_solve_kernel(size_t m, size_t n, float *matrix, float *vec, 
 void gpu_solve(size_t m, size_t n, float *matrix, float *vec, float *out, size_t blk_size)
 {
 #ifdef MEASURE_TIME
-	auto fn_start = high_resolution_clock::now();
+
+	cudaEvent_t alloc_start, alloc_end, total_start, total_end;
+	cudaEventCreate(&alloc_start);
+	cudaEventCreate(&alloc_end);
+	cudaEventCreate(&total_start);
+	cudaEventCreate(&total_end);
+	cudaEventRecord(total_start);
+	cudaEventRecord(alloc_start);
 #endif
 
 	size_t matrix_bytes = sizeof(float) * m * n;
@@ -92,14 +99,24 @@ void gpu_solve(size_t m, size_t n, float *matrix, float *vec, float *out, size_t
 	dim3 grid_dim((m + block_dim.x - 1) / block_dim.x);
 
 #ifdef MEASURE_TIME
-	auto kernel_start = high_resolution_clock::now();
+	float alloc_elapsed;
+	cudaEventRecord(alloc_end);
+	cudaEventSynchronize(alloc_end);
+	cudaEventElapsedTime(&alloc_elapsed, alloc_start, alloc_end);
+
+	cudaEvent_t kernel_start, kernel_end;
+	cudaEventCreate(&kernel_start);
+	cudaEventCreate(&kernel_end);
+	cudaEventRecord(kernel_start);
 #endif
 
 	gpu_solve_kernel<<<grid_dim, block_dim>>>(m, n, gpu_matrix, gpu_vec, gpu_out);
 
 #ifdef MEASURE_TIME
-	cudaDeviceSynchronize();
-	auto kernel_end = high_resolution_clock::now();
+	float kernel_elapsed;
+	cudaEventRecord(kernel_end);
+	cudaEventSynchronize(kernel_end);
+	cudaEventElapsedTime(&kernel_elapsed, kernel_start, kernel_end);
 #endif
 
 	cudaMemcpy(out, gpu_out, out_bytes, cudaMemcpyDeviceToHost);
@@ -109,10 +126,11 @@ void gpu_solve(size_t m, size_t n, float *matrix, float *vec, float *out, size_t
 	cudaFree(gpu_out);
 
 #ifdef MEASURE_TIME
-	double total = duration<double, milli>(high_resolution_clock::now() - fn_start).count();
-	double alloc = duration<double, milli>(kernel_start - fn_start).count();
-	double kernel = duration<double, milli>(kernel_end - kernel_start).count();
-
-	printf("[GPU solve took] %.5f ms (alloc: %.5f ms, kernel: %.5f ms) \n", total, alloc, kernel);
+	float total_elapsed;
+	cudaEventRecord(total_end);
+	cudaEventSynchronize(total_end);
+	cudaEventElapsedTime(&total_elapsed, total_start, total_end);
+	printf("[GPU solve fn took] %.5f ms (alloc: %.5f ms, kernel: %.5f ms) \n", total_elapsed,
+		   alloc_elapsed, kernel_elapsed);
 #endif
 }
