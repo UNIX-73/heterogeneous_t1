@@ -1,0 +1,54 @@
+[
+  {
+    "arguments": [
+      "/opt/cuda/bin/nvcc",
+      "-O2",
+      "-Iinclude",
+      "-Xcompiler",
+      "-Wall -Werror",
+      "-x",
+      "cu",
+      "-c",
+      "-o",
+      "build/init.o",
+      "src/init.c"
+    ],
+    "directory": "/home/unab/files/master/heterogeneous/task1",
+    "file": "/home/unab/files/master/heterogeneous/task1/src/init.c",
+    "output": "/home/unab/files/master/heterogeneous/task1/build/init.o"
+  },
+  {
+    "arguments": [
+      "/opt/cuda/bin/nvcc",
+      "-c",
+      "-O2",
+      "-Iinclude",
+      "-Xcompiler",
+      "-Wall -Werror",
+      "build/init.o",
+      "-o",
+      "t1",
+      "src/main.cu"
+    ],
+    "directory": "/home/unab/files/master/heterogeneous/task1",
+    "file": "/home/unab/files/master/heterogeneous/task1/src/main.cu",
+    "output": "/home/unab/files/master/heterogeneous/task1/t1"
+  },
+  {
+    "arguments": [
+      "/opt/cuda/bin/nvcc",
+      "-c",
+      "-O2",
+      "-Iinclude",
+      "-Xcompiler",
+      "-Wall -Werror",
+      "build/init.o",
+      "-o",
+      "t1",
+      "src/solvers.cu"
+    ],
+    "directory": "/home/unab/files/master/heterogeneous/task1",
+    "file": "/home/unab/files/master/heterogeneous/task1/src/solvers.cu",
+    "output": "/home/unab/files/master/heterogeneous/task1/t1"
+  }
+]
